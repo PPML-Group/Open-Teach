@@ -114,6 +114,7 @@ class ZedMiniCamera():
             self.rgb_viz_publisher = ZMQCompressedImageTransmitter(
                 host = self._host,
                 port = self._transformation_port + VIZ_PORT_OFFSET
+                # port = '10505'
             )
 
         self.depth_publisher = ZMQCameraPublisher(
@@ -172,10 +173,10 @@ class ZedMiniCamera():
                     color_image = self.image.get_data()
                     depth_image = self.depth.get_data()
 
-                    # 显示图像
-                    cv2.imshow('Image', color_image)
-                    # 等待用户按下任意键退出窗口
-                    cv2.waitKey(3)
+                    # # 显示图像
+                    # cv2.imshow('Image', color_image)
+                    # # 等待用户按下任意键退出窗口
+                    # cv2.waitKey(3)
                     
                     # Publishing the rgb images
                     self.rgb_publisher.pub_rgb_image(color_image, timestamp.get_milliseconds())
@@ -201,11 +202,14 @@ class ZedMiniCamera():
 
 @hydra.main(version_base = '1.2', config_path = 'configs', config_name = 'network')
 def main(config):
+    # host = '192.168.2.58'
+    # transformation_port = '8089'
     print(f"Host Address: {config.host_address}")
     print(f"Transformed Position Left Keypoint Port: {config.transformed_position_keypoint_port}")
     host = config.host_address
     transformation_port = config.cam_port_offset
-    while_publisher = ZedMiniCamera(host, transformation_port, False)
+    # transformation_port = '10505'
+    while_publisher = ZedMiniCamera(host, transformation_port, True)
     while_publisher.stream()
 
 if __name__ == '__main__':
